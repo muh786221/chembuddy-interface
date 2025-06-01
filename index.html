@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChemBuddy AI Chatbot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f4f9;
+    }
+
+    .chat-launcher {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: #003366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .chat-launcher:hover {
+      background-color: #0055aa;
+    }
+
+    .chat-launcher img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .chat-iframe {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      width: 360px;
+      height: 480px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Chat Launcher Button -->
+<div class="chat-launcher" onclick="toggleChat()">
+  <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
+</div>
+
+<!-- Chat Frame (Botpress Webchat) -->
+<iframe 
+  class="chat-iframe"
+  id="bp-webchat"
+  src="https://cdn.botpress.cloud/webchat/v0/inject.html?clientId=d552eb7f-b74a-4e66-8b6b-94e6f4c6314f&botId=chembuddy&workspaceId=wkspace_01JW40M6ZASAZZCN1ZY479ES5E"
+></iframe>
+
+<script>
+  function toggleChat() {
+    const chat = document.getElementById("bp-webchat");
+    chat.style.display = (chat.style.display === "block") ? "none" : "block";
+  }
+</script>
+
+</body>
+</html>
