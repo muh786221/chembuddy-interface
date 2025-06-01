@@ -35,40 +35,36 @@
       width: 32px;
       height: 32px;
     }
-
-    .chat-iframe {
-      position: fixed;
-      bottom: 100px;
-      right: 20px;
-      width: 360px;
-      height: 480px;
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      display: none;
-      z-index: 999;
-    }
   </style>
 </head>
 <body>
 
 <!-- Chat Launcher Button -->
-<div class="chat-launcher" onclick="toggleChat()">
+<div class="chat-launcher" onclick="toggleBotpressChat()">
   <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
 </div>
 
-<!-- Chat Frame (Botpress Webchat) -->
-<iframe 
-  class="chat-iframe"
-  id="bp-webchat"
-  src="https://cdn.botpress.cloud/webchat/v0/inject.html?clientId=d552eb7f-b74a-4e66-8b6b-94e6f4c6314f&botId=chembuddy&workspaceId=wkspace_01JW40M6ZASAZZCN1ZY479ES5E"
-></iframe>
+<!-- Botpress WebChat Embed Scripts -->
+<script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
+<script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
 
 <script>
-  function toggleChat() {
-    const chat = document.getElementById("bp-webchat");
-    chat.style.display = (chat.style.display === "block") ? "none" : "block";
+  function toggleBotpressChat() {
+    const webchat = window.botpressWebChat;
+    if (webchat.isVisible()) {
+      webchat.hide();
+    } else {
+      webchat.show();
+    }
   }
+
+  // Load WebChat automatically (optional)
+  window.addEventListener('load', function () {
+    window.botpressWebChat.init({
+      showPoweredBy: false,
+      hideWidget: true, // Hides default widget so you use your own launcher
+    });
+  });
 </script>
 
 </body>
