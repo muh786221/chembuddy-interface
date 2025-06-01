@@ -58,11 +58,25 @@
     }
   }
 
-  // Load WebChat automatically (optional)
+  // Load WebChat with responsive design
   window.addEventListener('load', function () {
+    const isMobile = window.innerWidth < 768;
     window.botpressWebChat.init({
       showPoweredBy: false,
-      hideWidget: true, // Hides default widget so you use your own launcher
+      hideWidget: true, // So we use our own launcher
+      customStyles: {
+        layout: {
+          width: isMobile ? '95%' : '400px',
+          height: isMobile ? '90%' : '600px'
+        },
+        chatContainer: {
+          width: isMobile ? '95%' : '400px',
+          height: isMobile ? '90%' : '600px',
+          bottom: '100px',
+          right: '24px',
+          borderRadius: '16px'
+        }
+      }
     });
   });
 </script>
