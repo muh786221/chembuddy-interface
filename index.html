@@ -4,13 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ChemBuddy AI Chatbot</title>
+
+  <!-- Modern Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
       margin: 0;
       background: #f4f4f9;
     }
 
+    /* Custom Chat Button */
     .chat-launcher {
       position: fixed;
       bottom: 24px;
@@ -18,17 +23,18 @@
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background-color: #003366;
+      background-color: #0d1117;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       z-index: 1000;
+      transition: background-color 0.3s ease;
     }
 
     .chat-launcher:hover {
-      background-color: #0055aa;
+      background-color: #2ea043;
     }
 
     .chat-launcher img {
@@ -39,47 +45,38 @@
 </head>
 <body>
 
-<!-- Chat Launcher Button -->
-<div class="chat-launcher" onclick="toggleBotpressChat()">
-  <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
-</div>
+  <!-- Floating Chat Button -->
+  <div class="chat-launcher" onclick="toggleBotpressChat()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat" />
+  </div>
 
-<!-- Botpress WebChat Embed Scripts -->
-<script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
-<script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
+  <!-- Botpress WebChat Scripts -->
+  <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
 
-<script>
-  function toggleBotpressChat() {
-    const webchat = window.botpressWebChat;
-    if (webchat.isVisible()) {
-      webchat.hide();
-    } else {
-      webchat.show();
-    }
-  }
-
-  // Load WebChat with responsive design
-  window.addEventListener('load', function () {
-    const isMobile = window.innerWidth < 768;
-    window.botpressWebChat.init({
-      showPoweredBy: false,
-      hideWidget: true, // So we use our own launcher
-      customStyles: {
-        layout: {
-          width: isMobile ? '95%' : '400px',
-          height: isMobile ? '90%' : '600px'
-        },
-        chatContainer: {
-          width: isMobile ? '95%' : '400px',
-          height: isMobile ? '90%' : '600px',
-          bottom: '100px',
-          right: '24px',
-          borderRadius: '16px'
-        }
+  <script>
+    function toggleBotpressChat() {
+      const webchat = window.botpressWebChat;
+      if (webchat.isVisible()) {
+        webchat.hide();
+      } else {
+        webchat.show();
       }
+    }
+
+    // Initialize the Chatbot
+    window.addEventListener('load', function () {
+      window.botpressWebChat.init({
+        showPoweredBy: false,
+        hideWidget: true,
+        layout: {
+          width: '400px',
+          height: '600px',
+        },
+        stylesheet: 'https://comforting-cassata-e4410d.netlify.app/custom.css' // ✅ Custom Theme
+      });
     });
-  });
-</script>
+  </script>
 
 </body>
 </html>
