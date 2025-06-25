@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChemBuddy AI – Premium Chatbot</title>
 
-  <!-- Google Fonts -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 
   <!-- Custom Styles -->
@@ -69,13 +69,13 @@
   <!-- 3D Animated Background -->
   <div id="particles-js"></div>
 
-  <!-- Welcome Section -->
+  <!-- Welcome Text & Launch Button -->
   <div class="hero-content">
     <h1>Welcome to ChemBuddy AI</h1>
     <button class="launch-btn" onclick="toggleBotpressChat()">Launch Chat</button>
   </div>
 
-  <!-- Botpress Embed -->
+  <!-- Botpress WebChat -->
   <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
 
@@ -90,17 +90,20 @@
     }
 
     window.addEventListener('load', function () {
+      alert("👋 Welcome to ChemBuddy AI! Your chemistry assistant is ready.");
       window.botpressWebChat.init({
         hideWidget: true,
         showPoweredBy: false,
-        enableReset: true,
         botName: 'ChemBuddy AI',
-        layout: { width: '400px', height: '600px' },
-        stylesheet: 'https://comforting-cassata-e4410d.netlify.app/custom.css',
+        layout: {
+          width: window.innerWidth > 600 ? '500px' : '100%',
+          height: window.innerHeight > 700 ? '600px' : '100%',
+        },
+        stylesheet: 'https://cdn.jsdelivr.net/gh/muh786221/chembuddy-style@main/custom.css',
         themeName: 'prism',
         theme: 'dark',
-        language: 'en',  // Can be extended to multilingual
         enableTranscriptDownload: true,
+        language: 'en',
         frontend: {
           enableAttachments: true,
           enableVoice: true,
@@ -115,7 +118,7 @@
   <script>
     particlesJS('particles-js', {
       particles: {
-        number: { value: 80 },
+        number: { value: 90 },
         color: { value: '#00ffe7' },
         shape: { type: 'circle' },
         opacity: { value: 0.6 },
@@ -141,6 +144,5 @@
       retina_detect: true
     });
   </script>
-
 </body>
 </html>
