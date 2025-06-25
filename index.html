@@ -4,14 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChemBuddy AI – Premium Chatbot</title>
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Custom Styles -->
   <style>
     html, body {
       margin: 0;
       padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: #000;
-      color: #fff;
+      background: #0d1117;
+      color: #ffffff;
       height: 100vh;
       overflow: hidden;
     }
@@ -28,46 +32,53 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
       height: 100vh;
       z-index: 2;
       position: relative;
+      text-align: center;
+      padding: 20px;
     }
 
     .hero-content h1 {
       font-size: 3rem;
-      color: #0ff;
-      text-shadow: 0 0 20px #0ff;
+      color: #00ffe7;
+      text-shadow: 0 0 20px #00ffe7;
+      margin-bottom: 20px;
     }
 
     .launch-btn {
-      background: #0ff;
-      color: #000;
+      background: linear-gradient(145deg, #00ffe7, #0084ff);
+      color: #0d1117;
       font-size: 1.2rem;
-      padding: 15px 30px;
+      padding: 15px 32px;
       border: none;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 0 15px #0ff;
-      margin-top: 20px;
-      transition: 0.3s;
+      box-shadow: 0 0 25px #00ffe7;
+      transition: all 0.3s ease-in-out;
     }
 
     .launch-btn:hover {
-      box-shadow: 0 0 25px #0ff, 0 0 35px #0ff;
+      box-shadow: 0 0 45px #00ffe7, 0 0 65px #0084ff;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
+
+  <!-- 3D Animated Background -->
   <div id="particles-js"></div>
+
+  <!-- Welcome Section -->
   <div class="hero-content">
     <h1>Welcome to ChemBuddy AI</h1>
     <button class="launch-btn" onclick="toggleBotpressChat()">Launch Chat</button>
   </div>
 
-  <!-- Botpress Chat -->
+  <!-- Botpress Embed -->
   <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
+
   <script>
     function toggleBotpressChat() {
       const chat = window.botpressWebChat;
@@ -83,16 +94,13 @@
         hideWidget: true,
         showPoweredBy: false,
         enableReset: true,
-        layout: {
-          width: '400px',
-          height: '600px'
-        },
+        botName: 'ChemBuddy AI',
+        layout: { width: '400px', height: '600px' },
         stylesheet: 'https://comforting-cassata-e4410d.netlify.app/custom.css',
         themeName: 'prism',
         theme: 'dark',
+        language: 'en',  // Can be extended to multilingual
         enableTranscriptDownload: true,
-        language: 'en',
-        botName: 'ChemBuddy AI',
         frontend: {
           enableAttachments: true,
           enableVoice: true,
@@ -107,11 +115,11 @@
   <script>
     particlesJS('particles-js', {
       particles: {
-        number: { value: 100 },
-        color: { value: '#0ff' },
+        number: { value: 80 },
+        color: { value: '#00ffe7' },
         shape: { type: 'circle' },
-        opacity: { value: 0.5 },
-        size: { value: 3 },
+        opacity: { value: 0.6 },
+        size: { value: 4 },
         move: {
           enable: true,
           speed: 2,
@@ -133,5 +141,6 @@
       retina_detect: true
     });
   </script>
+
 </body>
 </html>
