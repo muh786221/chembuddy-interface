@@ -35,10 +35,6 @@
       transition:background .5s, color .5s;
       position:relative;
     }
-    .light-mode html, .light-mode body {
-      background:#f4f4f9;
-      color:#1E293B;
-    }
     .background-glow{
       position:absolute;inset:0;
       background:
@@ -107,11 +103,6 @@
       overflow-y:auto;
     }
     #historyPanel.open{transform:translateX(0);}
-    #historyPanel h3{
-      margin-bottom:10px;
-      border-bottom:1px solid var(--cb-accent);
-      padding-bottom:8px;
-    }
     .history-item{
       margin:6px 0;
       padding:6px 10px;
@@ -122,46 +113,10 @@
       transition:background .2s;
     }
     .history-item:hover{background:#334155;}
-    .cb-typing{
-      font-style:italic;color:#aaa;margin:8px 16px;
-    }
     .cb-header-btn{
       background:transparent;border:none;color:#fff;font-size:1.1rem;margin-left:8px;
       cursor:pointer;
     }
-    /* Botpress widget styling */
-    #bp-web-widget{
-      font-family:var(--cb-font)!important;
-      background-color:var(--cb-bg)!important;
-      border-radius:var(--cb-radius)!important;
-      box-shadow:0 0 30px rgba(14,165,233,0.6);
-    }
-    #bp-web-widget .bp-header{
-      background-color:var(--cb-accent)!important;
-      color:#fff!important;
-      position:relative;
-    }
-    #bp-web-widget .bp-message.bot .bpw-message-content{
-      background-color:var(--cb-bot-bubble)!important;
-      color:var(--cb-text)!important;
-      border-radius:16px 16px 16px 4px!important;
-      animation:fadeIn .4s ease;
-    }
-    #bp-web-widget .bp-message.user .bpw-message-content{
-      background-color:var(--cb-user-bubble)!important;
-      color:#fff!important;
-      border-radius:16px 16px 4px 16px!important;
-      animation:fadeInRight .4s ease;
-    }
-    #bp-web-widget button{background-color:var(--cb-accent)!important;color:#fff!important;}
-    #bp-web-widget button:hover{background-color:#0284C7!important;}
-    #bp-web-widget input[type="text"]{
-      background:#1E293B!important;color:#fff!important;
-      border:1px solid var(--cb-accent)!important;
-      border-radius:10px!important;padding:10px;
-    }
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-    @keyframes fadeInRight{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
   </style>
 </head>
 <body>
@@ -174,92 +129,97 @@
     <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat"/>
   </div>
   <div id="historyPanel"><h3>Chat History</h3><div id="historyList"></div></div>
+
+  <!-- Botpress Widget -->
   <script src="https://cdn.botpress.cloud/webchat/v3/inject.js"></script>
-  <script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
   <script>
-    function createBrowserSpeechPonyfill(){
+    const sessions = JSON.parse(localStorage.getItem('cbHistory') || '[]');
+    let currentSession = [], embedded = false, lang = 'en';
+
+    function createSpeechKit() {
       const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const GrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
-      const SpeechUtter = window.SpeechSynthesisUtterance;
-      return ()=>({ Recognition, GrammarList, SpeechUtter, speechSynthesis: window.speechSynthesis });
+      return () => ({ Recognition, speechSynthesis: window.speechSynthesis });
     }
 
-    const sessions = JSON.parse(localStorage.getItem('cbHistory')||'[]');
-    let currentSession=[], embeddedLoaded=false, lang='en';
+    function openChatWindow() {
+      window.open("https://cdn.botpress.cloud/webchat/v3.0/shareable.html?configUrl=https://files.bpcontent.cloud/2025/05/25/15/20250525152507-LXHIPHJ0.json",
+        "ChemBuddy Chat", "width=600,height=800,resizable=yes");
+    }
 
-    function saveSession(){
-      if(currentSession.length){
-        sessions.unshift([...currentSession]);
-        localStorage.setItem('cbHistory', JSON.stringify(sessions.slice(0,10)));
+    function toggleEmbeddedChat() {
+      if (!embedded) {
+        embedded = true;
+        botpressWebChat.init({
+          clientId: 'd552eb7f-b74a-4e66-8b6b-94e6f4c6314f',
+          workspaceId: 'wkspace_01JW40M6ZASAZZCN1ZY479ES5E',
+          botName: 'ChemBuddy AI',
+          showPoweredBy: false,
+          hideWidget: true,
+          enableAttachments: true,
+          enableVoice: true,
+          language: lang,
+          enableTranscriptDownload: true,
+          webSpeechPonyfillFactory: createSpeechKit()
+        });
+        botpressWebChat.show();
+        botpressWebChat.onEvent(event => {
+          if (['incoming', 'outgoing'].includes(event.type)) currentSession.push(event);
+          if (event.type === 'LIFECYCLE.WEBCHAT_READY') {
+            const hdr = document.querySelector('#bp-web-widget .bp-header');
+            const btns = document.createElement('div');
+            btns.className = 'cb-header-btns';
+            btns.innerHTML =
+              `<button class="cb-header-btn" onclick="switchTheme()">🌓</button>
+               <button class="cb-header-btn" onclick="switchLanguage()">🌐</button>
+               <button class="cb-header-btn" onclick="toggleHistory()">⋯</button>`;
+            hdr.appendChild(btns);
+          }
+        });
+      } else {
+        botpressWebChat.isVisible() ? botpressWebChat.hide() : botpressWebChat.show();
       }
     }
-    function renderHistory(){
-      document.getElementById('historyList').innerHTML = sessions.map((s,i)=>
-        `<div class="history-item">
-          <span>Session ${i+1} (${s.length} msgs)</span>
+
+    function switchTheme() {
+      document.documentElement.classList.toggle('light-mode');
+    }
+    function switchLanguage() {
+      lang = (lang === 'en') ? 'ur' : 'en';
+      botpressWebChat.sendEvent({ type: 'custom', payload: { action: 'CHANGE_LANG', lang } });
+    }
+    function saveSession() {
+      if (currentSession.length) {
+        sessions.unshift([...currentSession]);
+        localStorage.setItem('cbHistory', JSON.stringify(sessions.slice(0, 10)));
+      }
+    }
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      list.innerHTML = sessions.map((s, i) => `
+        <div class="history-item">
+          <span>Session ${i + 1} (${s.length} msgs)</span>
           <button onclick="deleteSession(${i});event.stopPropagation()">🗑️</button>
         </div>`).join('');
-      Array.from(document.getElementsByClassName('history-item')).forEach((div,i)=>
-        div.ondblclick=()=>loadSession(i));
+      Array.from(list.children).forEach((d, i) => d.ondblclick = () => loadSession(i));
     }
-    function deleteSession(i){
-      sessions.splice(i,1);
+    function deleteSession(i) {
+      sessions.splice(i, 1);
       localStorage.setItem('cbHistory', JSON.stringify(sessions));
       renderHistory();
     }
-    function loadSession(i){
-      botpressWebChat.sendEvent({type:'custom',payload:{action:'LOAD_SESSION',messages:sessions[i]}});
+    function loadSession(i) {
+      botpressWebChat.sendEvent({ type: 'custom', payload: { action: 'LOAD_SESSION', messages: sessions[i] } });
       toggleHistory(false);
     }
-    function toggleHistory(show=true){
+    function toggleHistory(show = true) {
       document.getElementById('historyPanel').classList.toggle('open', show);
-      if(show) renderHistory();
-    }
-    function switchTheme(){
-      document.documentElement.classList.toggle('light-mode');
-    }
-    function switchLanguage(){
-      lang = lang==='en'?'ur':'en';
-      botpressWebChat.sendEvent({type:'custom',payload:{action:'CHANGE_LANG',lang}});
-    }
-    function openChatWindow(){
-      window.open(
-        "https://cdn.botpress.cloud/webchat/v3.0/shareable.html?configUrl=https://files.bpcontent.cloud/2025/05/25/15/20250525152507-LXHIPHJ0.json",
-        "ChemBuddy Full Chat","width=600,height=800,resizable=yes");
-    }
-    function toggleEmbeddedChat(){
-      const w = window.botpressWebChat;
-      if(!embeddedLoaded){
-        embeddedLoaded=true;
-        w.init({
-          hideWidget:false,showPoweredBy:false,botName:'ChemBuddy AI',
-          botId:'YOUR_BOT_ID',
-          layout:{width:'100%',height:'100%'},
-          stylesheet:'https://cdn.jsdelivr.net/gh/muh786221/chembuddy-style@main/custom.css',
-          enableAttachments:true,enableVoice:true,enableUpload:true,
-          enableTranscriptDownload:true, language:lang,
-          webSpeechPonyfillFactory:createBrowserSpeechPonyfill()
-        });
-        w.show();
-      } else w.isVisible()? w.hide(): w.show();
+      if (show) renderHistory();
     }
 
-    window.addEventListener('load',()=>{
-      botpressWebChat.onEvent(e=>{
-        if(e.type==='incoming'||e.type==='outgoing') currentSession.push(e);
-        if(e.type==='LIFECYCLE.WEBCHAT_READY'){
-          const hdr=document.querySelector('#bp-web-widget .bp-header');
-          const btns=document.createElement('div');
-          btns.className='cb-header-btns';
-          btns.innerHTML=
-            `<button class="cb-header-btn" onclick="switchTheme()">🌓</button>
-             <button class="cb-header-btn" onclick="switchLanguage()">🌐</button>
-             <button class="cb-header-btn" onclick="toggleHistory()">⋯</button>`;
-          hdr.appendChild(btns);
-        }
-      });
+    window.addEventListener('load', () => {
       toggleEmbeddedChat();
-      setTimeout(()=>alert("👋 Welcome to ChemBuddy! Click the chat icon or 'Launch Full Chat' to begin."),300);
+      setTimeout(() =>
+        alert("👋 Welcome to ChemBuddy! Say things like: 'good', 'perfect', 'go ahead', 'ok', 'hello' to try it out!"), 300);
     });
   </script>
 </body>
