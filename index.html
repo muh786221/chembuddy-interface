@@ -1,108 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>ChemBuddy AI – Premium Chatbot</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
-
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      width: 100%; height: 100%;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0d1117, #0f2027, #1a1a2e);
-      color: #fff;
-      overflow: hidden;
-      position: relative;
+    :root {
+      --cb-bg: #121826;
+      --cb-bot-bubble: #1F2937;
+      --cb-user-bubble: #2563EB;
+      --cb-text: #F1F5F9;
+      --cb-accent: #0EA5E9;
+      --cb-font: 'Poppins', sans-serif;
+      --cb-radius: 16px;
+      --cb-timestamp: #94a3b8;
     }
-    .background-glow {
-      position: absolute; inset: 0;
+    .light-mode {
+      --cb-bg: #F8FAFC;
+      --cb-bot-bubble: #E2E8F0;
+      --cb-user-bubble: #3B82F6;
+      --cb-text: #1E293B;
+      --cb-accent: #2563EB;
+      --cb-timestamp: #64748B;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{
+      width:100%;height:100%;
+      font-family:var(--cb-font);
+      background:var(--cb-bg);
+      color:var(--cb-text);
+      overflow:hidden;
+      transition:background .5s, color .5s;
+      position:relative;
+    }
+    .light-mode html, .light-mode body {
+      background:#f4f4f9;
+      color:#1E293B;
+    }
+    .background-glow{
+      position:absolute;inset:0;
       background:
-        radial-gradient(circle at center, rgba(0,255,255,0.1), transparent 70%),
-        radial-gradient(circle at 20% 30%, rgba(0,255,255,0.1), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(0,255,255,0.1), transparent 50%);
-      z-index: -1; pointer-events: none;
+        radial-gradient(circle at center,rgba(14,165,233,0.1),transparent 70%),
+        radial-gradient(circle at 20% 30%,rgba(14,165,233,0.05),transparent 50%),
+        radial-gradient(circle at 80% 70%,rgba(14,165,233,0.05),transparent 50%);
+      z-index:-1;pointer-events:none;
     }
-    .hero {
-      position: absolute; inset: 0; z-index: 1;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; text-align: center; padding: 20px;
+    .hero{
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;text-align:center;padding:20px;
+      z-index:1;
     }
-    .hero h1 {
-      font-size: 3rem;
-      color: #00ffe7;
-      text-shadow: 0 0 20px #00ffe7;
-      animation: glow 2s ease-in-out infinite alternate;
-      margin-bottom: 20px;
+    .hero h1{
+      font-size:3rem;
+      text-shadow:0 0 20px var(--cb-accent);
+      animation:glow 2s ease-in-out infinite alternate;
+      margin-bottom:20px;
     }
-    @keyframes glow {
-      to { text-shadow: 0 0 40px #0084ff; }
+    @keyframes glow{
+      to{text-shadow:0 0 40px var(--cb-accent);}
     }
-    .launch-btn {
-      background: linear-gradient(145deg,#00ffe7,#0084ff);
-      color: #0d1117;
-      padding: 15px 32px;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 0 25px #00ffe7;
-      transition: transform .2s, box-shadow .2s;
+    .launch-btn{
+      background:linear-gradient(145deg,var(--cb-accent),#0084ff);
+      color:var(--cb-bg);
+      padding:15px 32px;
+      font-size:1.2rem;
+      border:none;
+      border-radius:30px;
+      cursor:pointer;
+      box-shadow:0 0 25px var(--cb-accent);
+      transition:transform .2s,box-shadow .2s;
     }
-    .launch-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 65px #00ffe7;
+    .launch-btn:hover{
+      transform:scale(1.05);
+      box-shadow:0 0 65px var(--cb-accent);
     }
-    .chat-bubble {
-      position: fixed; bottom: 24px; right: 24px;
-      width: 64px; height:64px;
-      border-radius: 50%;
-      background: #00ffe7;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      z-index: 2;
-      transition: transform .2s;
+    .chat-bubble{
+      position:fixed;
+      bottom:24px;right:24px;
+      width:64px;height:64px;
+      border-radius:50%;
+      background:var(--cb-accent);
+      box-shadow:0 4px 12px rgba(0,0,0,0.4);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      z-index:2;
+      transition:transform .2s;
     }
-    .chat-bubble:hover { transform: scale(1.1); }
-    .chat-bubble img { width: 32px; height: 32px; }
-    #historyPanel {
-      position: fixed; top:0; left:0;
-      width: 320px; max-height:100vh;
-      background:#1E293B; color:#fff;
-      box-shadow:2px 0 10px rgba(0,0,0,0.4);
-      transform: translateX(-100%);
-      transition: transform .3s;
-      z-index:4; padding:20px; overflow-y:auto;
+    .chat-bubble:hover{transform:scale(1.1);}
+    .chat-bubble img{width:32px;height:32px;}
+    #historyPanel{
+      position:fixed;
+      top:60px; right:20px;
+      width:300px;
+      max-height:calc(100vh-80px);
+      background:var(--cb-bg);
+      color:var(--cb-text);
+      padding:15px;
+      border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.4);
+      transform:translateX(150%);
+      transition:transform .3s;
+      z-index:9999;
+      overflow-y:auto;
     }
-    #historyPanel.open { transform: translateX(0); }
-    #historyPanel h3 {
-      margin-top:0;
-      border-bottom:1px solid #0EA5E9;
+    #historyPanel.open{transform:translateX(0);}
+    #historyPanel h3{
+      margin-bottom:10px;
+      border-bottom:1px solid var(--cb-accent);
       padding-bottom:8px;
     }
-    .history-item {
-      margin:8px 0;
-      padding:8px;
-      background:#121826;
-      border-radius:8px;
+    .history-item{
+      margin:6px 0;
+      padding:6px 10px;
+      background:var(--cb-bot-bubble);
+      border-radius:6px;
+      display:flex;align-items:center;justify-content:space-between;
       cursor:pointer;
-      display:flex; justify-content:space-between; align-items:center;
+      transition:background .2s;
     }
-    .history-item button {
-      background:transparent; border:none;
-      color:#f00; cursor:pointer;
+    .history-item:hover{background:#334155;}
+    .cb-typing{
+      font-style:italic;color:#aaa;margin:8px 16px;
     }
-    .cb-typing {
-      font-style: italic;
-      color: #aaa;
-      margin: 8px 16px;
+    .cb-header-btn{
+      background:transparent;border:none;color:#fff;font-size:1.1rem;margin-left:8px;
+      cursor:pointer;
     }
+    /* Botpress widget styling */
+    #bp-web-widget{
+      font-family:var(--cb-font)!important;
+      background-color:var(--cb-bg)!important;
+      border-radius:var(--cb-radius)!important;
+      box-shadow:0 0 30px rgba(14,165,233,0.6);
+    }
+    #bp-web-widget .bp-header{
+      background-color:var(--cb-accent)!important;
+      color:#fff!important;
+      position:relative;
+    }
+    #bp-web-widget .bp-message.bot .bpw-message-content{
+      background-color:var(--cb-bot-bubble)!important;
+      color:var(--cb-text)!important;
+      border-radius:16px 16px 16px 4px!important;
+      animation:fadeIn .4s ease;
+    }
+    #bp-web-widget .bp-message.user .bpw-message-content{
+      background-color:var(--cb-user-bubble)!important;
+      color:#fff!important;
+      border-radius:16px 16px 4px 16px!important;
+      animation:fadeInRight .4s ease;
+    }
+    #bp-web-widget button{background-color:var(--cb-accent)!important;color:#fff!important;}
+    #bp-web-widget button:hover{background-color:#0284C7!important;}
+    #bp-web-widget input[type="text"]{
+      background:#1E293B!important;color:#fff!important;
+      border:1px solid var(--cb-accent)!important;
+      border-radius:10px!important;padding:10px;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeInRight{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
   </style>
 </head>
 <body>
-
   <div class="background-glow"></div>
   <div class="hero">
     <h1>Welcome to ChemBuddy AI</h1>
@@ -111,73 +172,73 @@
   <div class="chat-bubble" onclick="toggleEmbeddedChat()">
     <img src="https://img.icons8.com/ios-filled/50/ffffff/chat.png" alt="Chat"/>
   </div>
-  <div id="historyPanel">
-    <h3>Chat History</h3>
-    <div id="historyList"></div>
-    <button onclick="closeHistory()">Close</button>
-  </div>
+  <div id="historyPanel"><h3>Chat History</h3><div id="historyList"></div></div>
 
   <script src="https://cdn.botpress.cloud/webchat/v2.5/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2025/05/25/15/20250525152502-R9G1ZTLL.js"></script>
   <script>
-    let sessions = JSON.parse(localStorage.getItem('cbHistory')||'[]'),
-        currentSession = [], embeddedLoaded=false, lang='en';
-
-    function saveSession() {
-      sessions.unshift(currentSession);
-      localStorage.setItem('cbHistory', JSON.stringify(sessions.slice(0,10)));
+    function createBrowserSpeechPonyfill(){
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const GrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+      const SpeechUtter = window.SpeechSynthesisUtterance;
+      return ()=>({ Recognition, GrammarList, SpeechUtter, speechSynthesis: window.speechSynthesis });
     }
 
-    function openHistory() {
-      const panel = document.getElementById('historyPanel');
-      panel.classList.add('open');
-      const list = document.getElementById('historyList');
-      list.innerHTML = '';
-      sessions.forEach((s,i) => {
-        const div = document.createElement('div');
-        div.className='history-item';
-        div.innerHTML = `<span>Session ${i+1} (${s.length} msgs)</span>
-                         <button onclick="deleteSession(${i});event.stopPropagation()">🗑️</button>`;
-        div.onclick = () => loadSession(i);
-        list.appendChild(div);
-      });
+    const sessions = JSON.parse(localStorage.getItem('cbHistory')||'[]');
+    let currentSession=[], embeddedLoaded=false, lang='en';
+
+    function saveSession(){
+      if(currentSession.length){
+        sessions.unshift([...currentSession]);
+        localStorage.setItem('cbHistory', JSON.stringify(sessions.slice(0,10)));
+      }
     }
-    function deleteSession(i) {
+    function renderHistory(){
+      document.getElementById('historyList').innerHTML = sessions.map((s,i)=>
+        `<div class="history-item">
+          <span>Session ${i+1} (${s.length} msgs)</span>
+          <button onclick="deleteSession(${i});event.stopPropagation()">🗑️</button>
+        </div>`).join('');
+      Array.from(document.getElementsByClassName('history-item')).forEach((div,i)=>
+        div.ondblclick=()=>loadSession(i));
+    }
+    function deleteSession(i){
       sessions.splice(i,1);
       localStorage.setItem('cbHistory', JSON.stringify(sessions));
-      openHistory();
+      renderHistory();
     }
-    function loadSession(i) {
+    function loadSession(i){
       botpressWebChat.sendEvent({type:'custom',payload:{action:'LOAD_SESSION',messages:sessions[i]}});
-      closeHistory();
+      toggleHistory(false);
     }
-    function closeHistory() {
-      document.getElementById('historyPanel').classList.remove('open');
+    function toggleHistory(show=true){
+      document.getElementById('historyPanel').classList.toggle('open', show);
+      if(show) renderHistory();
+    }
+    function switchTheme(){
+      document.documentElement.classList.toggle('light-mode');
     }
     function switchLanguage(){
-      lang = lang==='en' ? 'ur' : 'en';
-      document.getElementById('lang-btn').innerText = lang==='en' ? 'اردو' : 'EN';
+      lang = lang==='en'?'ur':'en';
       botpressWebChat.sendEvent({type:'custom',payload:{action:'CHANGE_LANG',lang}});
     }
-
     function openChatWindow(){
       window.open(
         "https://cdn.botpress.cloud/webchat/v3.0/shareable.html?configUrl=https://files.bpcontent.cloud/2025/05/25/15/20250525152507-LXHIPHJ0.json",
-        "ChemBuddy Full Chat",
-        "width=600,height=800,resizable=yes"
-      );
+        "ChemBuddy Full Chat","width=600,height=800,resizable=yes");
     }
-
     function toggleEmbeddedChat(){
       const w = window.botpressWebChat;
       if(!embeddedLoaded){
         embeddedLoaded=true;
         w.init({
-          hideWidget:false, showPoweredBy:false, botName:'ChemBuddy AI',
+          hideWidget:false,showPoweredBy:false,botName:'ChemBuddy AI',
+          botId:'YOUR_BOT_ID',
           layout:{width:'100%',height:'100%'},
           stylesheet:'https://cdn.jsdelivr.net/gh/muh786221/chembuddy-style@main/custom.css',
           enableAttachments:true,enableVoice:true,enableUpload:true,
-          enableTranscriptDownload:true,language:lang
+          enableTranscriptDownload:true, language:lang,
+          webSpeechPonyfillFactory:createBrowserSpeechPonyfill()
         });
         w.show();
       } else w.isVisible()? w.hide(): w.show();
@@ -186,26 +247,19 @@
     window.addEventListener('load',()=>{
       botpressWebChat.onEvent(e=>{
         if(e.type==='incoming'||e.type==='outgoing') currentSession.push(e);
-        if(e.type==='LIFECYCLE.WEBCHAT_OPEN') saveSession();
         if(e.type==='LIFECYCLE.WEBCHAT_READY'){
-          const header = document.querySelector('#bp-web-widget .bp-header');
-          const div = document.createElement('div');
-          div.id='cb-header-btns';
-          div.innerHTML = `<button id="lang-btn" class="cb-header-btn">اردو</button>
-                           <button id="hist-btn" class="cb-header-btn">⋯</button>`;
-          header.appendChild(div);
-          document.getElementById('lang-btn').onclick = switchLanguage;
-          document.getElementById('hist-btn').onclick = openHistory;
-        }
-        if(e.type==='incoming'){
-          const typing = document.createElement('div');
-          typing.className='cb-typing';
-          typing.innerText='ChemBuddy is typing…';
-          document.querySelector('.bpw-messages').appendChild(typing);
-          setTimeout(()=>typing.remove(),1000+Math.random()*1000);
+          const hdr=document.querySelector('#bp-web-widget .bp-header');
+          const btns=document.createElement('div');
+          btns.className='cb-header-btns';
+          btns.innerHTML=
+            `<button class="cb-header-btn" onclick="switchTheme()">🌓</button>
+             <button class="cb-header-btn" onclick="switchLanguage()">🌐</button>
+             <button class="cb-header-btn" onclick="toggleHistory()">⋯</button>`;
+          hdr.appendChild(btns);
         }
       });
       toggleEmbeddedChat();
+      setTimeout(()=>alert("👋 Welcome to ChemBuddy! Click the chat icon or 'Launch Full Chat' to begin."),300);
     });
   </script>
 </body>
